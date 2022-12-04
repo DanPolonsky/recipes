@@ -4,30 +4,11 @@ import Head from "next/head";
 import { Session } from "next-auth";
 import { Props } from "next/script";
 
-export async function getServerSideProps(
-  context: GetSessionParams | undefined
-) {
-  const session = await getSession(context);
-
-  if (!session) {
-    return {
-      redirect: {
-        destination: "/auth/signin",
-        permanent: false,
-      },
-    };
-  }
-
-  return {
-    props: { session },
-  };
-}
-
 interface HomeProps {
-  session: Session;
+  s: Session;
 }
 
-const Home: NextPage<HomeProps> = ({ session }) => {
+const Home: NextPage<HomeProps> = ({ s: session }) => {
   return (
     <div className="flex flex-col h-screen items-center">
       <Head>
@@ -45,5 +26,24 @@ const Home: NextPage<HomeProps> = ({ session }) => {
     </div>
   );
 };
+
+export async function getServerSideProps(
+  context: GetSessionParams | undefined
+) {
+  const session = await getSession(context);
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: "/auth/signin",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: { s: session },
+  };
+}
 
 export default Home;

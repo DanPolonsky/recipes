@@ -12,35 +12,15 @@ import { useRouter } from "next/router";
 import { Session } from "next-auth";
 import { BuiltInProviderType } from "next-auth/providers";
 
-export async function getServerSideProps(
-  context: GetSessionParams | undefined
-) {
-  const session = await getSession(context);
-  if (session) {
-    return {
-      redirect: {
-        destination: "/",
-        permanent: false,
-      },
-    };
-  }
-
-  const providers = await getProviders();
-
-  return {
-    props: { session, providers },
-  };
-}
-
 interface SignInProps {
-  session: Session;
+  s: Session;
   providers: Record<
     LiteralUnion<BuiltInProviderType, string>,
     ClientSafeProvider
   >;
 }
 
-const SignIn: NextPage<SignInProps> = ({ session, providers }) => {
+const SignIn: NextPage<SignInProps> = ({ s: session, providers }) => {
   const router = useRouter();
   if (session) {
     router.replace("/");
@@ -65,4 +45,22 @@ const SignIn: NextPage<SignInProps> = ({ session, providers }) => {
   );
 };
 
+export async function getServerSideProps(
+  context: GetSessionParams | undefined
+) {
+  const session = await getSession(context);
+
+  if (session) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: { s: session },
+  };
+}
 export default SignIn;
